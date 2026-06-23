@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portada Salud · Tablero de Mejoras</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-900: #0d2e28;
+  --green-800: #14473e;
+  --green-700: #1a5c51;
+  --green-600: #24695C;
+  --green-400: #3a9e8a;
+  --green-200: #a8ddd3;
+  --green-100: #d4efe9;
+  --green-50:  #eef8f5;
+  --gray-950:  #0f1110;
+  --gray-900:  #1a1d1c;
+  --gray-800:  #252928;
+  --gray-700:  #363b39;
+  --gray-500:  #6b7370;
+  --gray-400:  #8f9896;
+  --gray-200:  #d1d8d6;
+  --gray-100:  #e8edeb;
+  --gray-50:   #f4f7f6;
+  --white:     #ffffff;
+  --amber:     #d97706;
+  --amber-bg:  #fef3c7;
+  --blue:      #2563eb;
+  --blue-bg:   #dbeafe;
+  --emerald:   #059669;
+  --emerald-bg:#d1fae5;
+  --red:       #dc2626;
+  --red-bg:    #fee2e2;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.07);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.15);
+  --font-main: 'Inter', system-ui, sans-serif;
+  --font-display: 'DM Sans', system-ui, sans-serif;
+  --transition: 0.18s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body { font-family: var(--font-main); background: var(--gray-50); color: var(--gray-900); min-height: 100vh; }
+
+/* ── HEADER ── */
+.site-header {
+  background: var(--green-900);
+  padding: 0 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px; position: sticky; top: 0; z-index: 50;
+  border-bottom: 1px solid var(--green-800);
+}
+.header-brand { display: flex; align-items: center; gap: 10px; }
+.header-logo {
+  width: 30px; height: 30px; border-radius: var(--radius-sm);
+  background: var(--green-600); display: flex; align-items: center; justify-content: center;
+}
+.header-logo svg { width: 16px; height: 16px; stroke: white; fill: none; stroke-width: 2; stroke-linecap: round; }
+.header-title { font-family: var(--font-display); font-size: 15px; font-weight: 500; color: white; line-height: 1; }
+.header-sub { font-size: 11px; color: var(--green-200); margin-top: 1px; }
+.header-actions { display: flex; gap: 8px; align-items: center; }
+.header-sync { font-size: 11px; color: var(--green-200); display: flex; align-items: center; gap: 5px; }
+.btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid transparent; transition: all var(--transition); font-family: var(--font-main); }
+.btn-ghost { background: rgba(255,255,255,0.08); color: white; border-color: rgba(255,255,255,0.15); }
+.btn-ghost:hover { background: rgba(255,255,255,0.15); }
+.btn-primary { background: var(--green-600); color: white; border-color: var(--green-600); }
+.btn-primary:hover { background: var(--green-700); }
+.btn-outline { background: white; color: var(--gray-700); border-color: var(--gray-200); }
+.btn-outline:hover { background: var(--gray-50); border-color: var(--gray-400); }
+.btn-danger { background: transparent; color: var(--red); border-color: var(--red); }
+.btn-danger:hover { background: var(--red-bg); }
+.btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+
+/* ── KPI STRIP ── */
+.kpi-strip {
+  background: white; border-bottom: 1px solid var(--gray-100);
+  padding: 0 2rem; display: flex; gap: 0; overflow-x: auto;
+}
+.kpi-item {
+  padding: 14px 24px; border-right: 1px solid var(--gray-100);
+  min-width: 110px; flex-shrink: 0;
+}
+.kpi-item:first-child { padding-left: 0; }
+.kpi-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-500); margin-bottom: 4px; }
+.kpi-value { font-size: 22px; font-weight: 600; font-family: var(--font-display); line-height: 1; }
+.kpi-value.amber { color: var(--amber); }
+.kpi-value.blue { color: var(--blue); }
+.kpi-value.emerald { color: var(--emerald); }
+.kpi-value.red { color: var(--red); }
+.kpi-value.green { color: var(--green-600); }
+
+/* ── TOOLBAR ── */
+.toolbar {
+  background: white; border-bottom: 1px solid var(--gray-100);
+  padding: 10px 2rem; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+}
+.search-wrap { position: relative; flex: 1; min-width: 180px; max-width: 300px; }
+.search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; stroke: var(--gray-400); fill: none; stroke-width: 2; stroke-linecap: round; }
+.search-wrap input { width: 100%; padding: 7px 10px 7px 32px; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 12px; font-family: var(--font-main); color: var(--gray-900); background: var(--gray-50); }
+.search-wrap input:focus { outline: none; border-color: var(--green-400); background: white; }
+.filter-select { padding: 7px 10px; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 12px; font-family: var(--font-main); color: var(--gray-700); background: var(--gray-50); cursor: pointer; }
+.filter-select:focus { outline: none; border-color: var(--green-400); }
+.toolbar-right { margin-left: auto; display: flex; gap: 8px; }
+.tab-group { display: flex; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); overflow: hidden; }
+.tab-btn { padding: 6px 12px; font-size: 12px; cursor: pointer; background: var(--gray-50); color: var(--gray-500); border: none; font-family: var(--font-main); transition: all var(--transition); display: flex; align-items: center; gap: 5px; }
+.tab-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; }
+.tab-btn.active { background: var(--green-600); color: white; }
+.tab-btn:not(.active):hover { background: var(--gray-100); color: var(--gray-700); }
+
+/* ── MAIN CONTENT ── */
+.main { padding: 1.5rem 2rem 3rem; }
+
+/* ── KANBAN ── */
+.kanban-wrap { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.kanban-col {}
+.col-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px; border-radius: var(--radius-md); margin-bottom: 10px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.col-pend { background: var(--amber-bg); color: #92400e; }
+.col-prog { background: var(--blue-bg); color: #1e40af; }
+.col-done { background: var(--emerald-bg); color: #065f46; }
+.col-count { background: rgba(0,0,0,0.1); border-radius: 20px; padding: 1px 7px; font-size: 10px; }
+
+/* ── CARD ── */
+.card {
+  background: white; border: 1px solid var(--gray-100); border-radius: var(--radius-lg);
+  padding: 12px 14px; margin-bottom: 8px; cursor: pointer;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.card:hover { border-color: var(--green-200); box-shadow: var(--shadow-sm); }
+.card-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+.card-id { font-size: 10px; color: var(--gray-400); font-family: var(--font-display); }
+.card-attach { font-size: 10px; color: var(--gray-400); display: flex; align-items: center; gap: 3px; }
+.card-title { font-size: 13px; font-weight: 500; line-height: 1.35; margin-bottom: 4px; color: var(--gray-900); }
+.card-module { font-size: 11px; color: var(--gray-500); margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
+.card-desc { font-size: 11px; color: var(--gray-600); line-height: 1.5; margin-bottom: 8px; border-left: 2px solid var(--gray-100); padding-left: 8px; }
+.card-footer { display: flex; gap: 5px; flex-wrap: wrap; }
+
+/* ── BADGES ── */
+.badge { font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
+.b-alta { background: var(--red-bg); color: #991b1b; }
+.b-media { background: var(--amber-bg); color: #92400e; }
+.b-baja { background: var(--emerald-bg); color: #065f46; }
+.b-func { background: #ede9fe; color: #5b21b6; }
+.b-ux { background: var(--blue-bg); color: #1e40af; }
+.b-datos { background: #fce7f3; color: #9d174d; }
+.b-com { background: var(--green-100); color: var(--green-800); }
+.b-tec { background: var(--gray-100); color: var(--gray-700); }
+
+/* ── TABLE ── */
+.table-wrap { background: white; border: 1px solid var(--gray-100); border-radius: var(--radius-lg); overflow: hidden; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+thead th { padding: 10px 12px; text-align: left; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-500); border-bottom: 1px solid var(--gray-100); background: var(--gray-50); }
+tbody td { padding: 10px 12px; border-bottom: 1px solid var(--gray-100); vertical-align: top; overflow: hidden; text-overflow: ellipsis; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { cursor: pointer; transition: background var(--transition); }
+tbody tr:hover td { background: var(--green-50); }
+
+/* ── EMPTY ── */
+.empty-col { padding: 20px; text-align: center; color: var(--gray-400); font-size: 11px; border: 1px dashed var(--gray-200); border-radius: var(--radius-md); }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(10,20,18,0.55);
+  z-index: 200; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: white; border-radius: var(--radius-xl); width: 100%; max-width: 580px;
+  box-shadow: var(--shadow-lg); margin: auto; animation: modalIn 0.2s ease;
+}
+@keyframes modalIn { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
+.modal-header {
+  padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--gray-100);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-header h2 { font-family: var(--font-display); font-size: 15px; font-weight: 500; }
+.modal-body { padding: 1.25rem 1.5rem; }
+.field { margin-bottom: 1rem; }
+.field label { display: block; font-size: 11px; font-weight: 500; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; }
+.field input, .field textarea, .field select {
+  width: 100%; padding: 8px 11px; border: 1px solid var(--gray-200); border-radius: var(--radius-sm);
+  font-size: 13px; font-family: var(--font-main); color: var(--gray-900); background: white;
+  transition: border-color var(--transition);
+}
+.field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--green-400); box-shadow: 0 0 0 3px rgba(36,105,92,0.08); }
+.field textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.field-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.modal-footer {
+  padding: 1rem 1.5rem; border-top: 1px solid var(--gray-100);
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+
+/* ── ATTACH ── */
+.drop-zone {
+  border: 1.5px dashed var(--gray-200); border-radius: var(--radius-md);
+  padding: 16px; text-align: center; cursor: pointer; transition: all var(--transition);
+  color: var(--gray-400); font-size: 12px;
+}
+.drop-zone:hover, .drop-zone.drag-over { border-color: var(--green-400); background: var(--green-50); color: var(--green-600); }
+.drop-zone svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.5; margin-bottom: 6px; display: block; margin-left: auto; margin-right: auto; }
+.attach-list { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; }
+.attach-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 10px; background: var(--gray-50); border: 1px solid var(--gray-100);
+  border-radius: var(--radius-sm); font-size: 11px;
+}
+.attach-item-name { display: flex; align-items: center; gap: 6px; color: var(--gray-700); overflow: hidden; }
+.attach-item-name svg { width: 13px; height: 13px; stroke: var(--gray-400); fill: none; stroke-width: 2; flex-shrink: 0; }
+.attach-item-name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.attach-item-actions { display: flex; gap: 5px; flex-shrink: 0; }
+.attach-item-actions a, .attach-item-actions button {
+  background: none; border: none; cursor: pointer; color: var(--gray-400); padding: 2px; display: flex; align-items: center;
+}
+.attach-item-actions a:hover, .attach-item-actions button:hover { color: var(--green-600); }
+.attach-item-actions svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+.attach-preview { width: 24px; height: 24px; border-radius: 3px; object-fit: cover; }
+
+/* ── SETUP BANNER ── */
+.setup-banner {
+  background: var(--green-50); border: 1px solid var(--green-100); border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; display: flex; align-items: flex-start; gap: 12px;
+}
+.setup-banner svg { width: 20px; height: 20px; stroke: var(--green-600); fill: none; stroke-width: 2; flex-shrink: 0; margin-top: 1px; }
+.setup-banner h3 { font-size: 13px; font-weight: 500; color: var(--green-800); margin-bottom: 4px; }
+.setup-banner p { font-size: 12px; color: var(--green-700); line-height: 1.5; }
+.setup-banner code { background: var(--green-100); padding: 1px 5px; border-radius: 3px; font-size: 11px; color: var(--green-800); font-family: monospace; }
+.setup-banner a { color: var(--green-600); text-decoration: underline; cursor: pointer; }
+
+/* ── GOOGLE SHEET CONFIG ── */
+.config-panel { background: var(--gray-900); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+.config-panel h3 { font-size: 12px; font-weight: 500; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+.config-row { display: flex; gap: 8px; align-items: center; }
+.config-input { flex: 1; padding: 8px 11px; border: 1px solid var(--gray-700); border-radius: var(--radius-sm); font-size: 12px; font-family: monospace; color: white; background: var(--gray-800); }
+.config-input:focus { outline: none; border-color: var(--green-400); }
+.config-input::placeholder { color: var(--gray-500); }
+
+/* ── HIDDEN ── */
+.hidden { display: none !important; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--gray-900); color: white;
+  padding: 10px 16px; border-radius: var(--radius-md); font-size: 12px; z-index: 999;
+  animation: toastIn 0.2s ease; box-shadow: var(--shadow-md);
+}
+@keyframes toastIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+
+/* ── PROGRESS BAR ── */
+.progress-bar { height: 3px; background: var(--gray-100); border-radius: 99px; margin-top: 6px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--green-600); border-radius: 99px; transition: width 0.4s ease; }
+
+@media (max-width: 768px) {
+  .site-header { padding: 0 1rem; }
+  .kpi-strip { padding: 0 1rem; }
+  .toolbar { padding: 8px 1rem; }
+  .main { padding: 1rem; }
+  .kanban-wrap { grid-template-columns: 1fr; }
+  .field-row, .field-row-3 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--green-900);padding:2rem">
+  <div style="background:white;border-radius:20px;padding:2.5rem 2rem;width:100%;max-width:360px;text-align:center">
+    <div style="width:52px;height:52px;border-radius:14px;background:#24695C;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem">
+      <svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:white;fill:none;stroke-width:2;stroke-linecap:round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    </div>
+    <div style="font-family:'DM Sans',sans-serif;font-size:18px;font-weight:500;color:#0d2e28;margin-bottom:4px">Portada Salud</div>
+    <div style="font-size:12px;color:#6b7370;margin-bottom:1.75rem">Grupo Portada · Tablero de mejoras</div>
+    <div style="text-align:left;margin-bottom:0.75rem">
+      <label style="font-size:11px;font-weight:600;color:#6b7370;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:5px">Contraseña de acceso</label>
+      <input id="pwdInput" type="password" placeholder="Ingresá la clave del equipo"
+        style="width:100%;padding:10px 12px;border:1.5px solid #d1d8d6;border-radius:8px;font-size:14px;font-family:'Inter',sans-serif;color:#1a1d1c;outline:none;transition:border-color 0.15s"
+        onfocus="this.style.borderColor='#24695C'" onblur="this.style.borderColor='#d1d8d6'"
+        onkeydown="if(event.key==='Enter')checkPwd()">
+    </div>
+    <div id="pwdError" style="font-size:11px;color:#dc2626;margin-bottom:0.75rem;display:none">Contraseña incorrecta. Intentá de nuevo.</div>
+    <button onclick="checkPwd()" style="width:100%;padding:10px;background:#24695C;color:white;border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s" onmouseover="this.style.background='#1a5248'" onmouseout="this.style.background='#24695C'">
+      Ingresar
+    </button>
+    <div style="font-size:10px;color:#8f9896;margin-top:1.25rem">Acceso restringido · Grupo Portada</div>
+  </div>
+</div>
+
+<!-- MAIN APP (hidden until login) -->
+<div id="appContent" style="display:none">
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-brand">
+    <div class="header-logo">
+      <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    </div>
+    <div>
+      <div class="header-title">Portada Salud</div>
+      <div class="header-sub">Grupo Portada · Tablero de mejoras</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <div class="header-sync" id="syncStatus">
+      <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      <span id="syncLabel">Sin sincronizar</span>
+    </div>
+    <button class="btn btn-ghost" onclick="syncFromSheet()" title="Sincronizar con Google Sheets">
+      <svg viewBox="0 0 24 24"><path d="M1 4v6h6"/><path d="M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+      Sincronizar
+    </button>
+    <button class="btn btn-primary" onclick="openNew()">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Nueva mejora
+    </button>
+  </div>
+</header>
+
+<!-- KPI STRIP -->
+<div class="kpi-strip" id="kpiStrip">
+  <div class="kpi-item"><div class="kpi-label">Total</div><div class="kpi-value" id="kTotal">—</div></div>
+  <div class="kpi-item"><div class="kpi-label">Pendientes</div><div class="kpi-value amber" id="kPend">—</div></div>
+  <div class="kpi-item"><div class="kpi-label">En progreso</div><div class="kpi-value blue" id="kProg">—</div></div>
+  <div class="kpi-item"><div class="kpi-label">Resueltos</div><div class="kpi-value emerald" id="kDone">—</div></div>
+  <div class="kpi-item"><div class="kpi-label">Alta prioridad</div><div class="kpi-value red" id="kAlta">—</div></div>
+  <div class="kpi-item" style="border-right:none">
+    <div class="kpi-label">Avance</div>
+    <div class="kpi-value green" id="kPct">—</div>
+    <div class="progress-bar"><div class="progress-fill" id="kBar" style="width:0%"></div></div>
+  </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="srch" placeholder="Buscar mejora, módulo..." oninput="render()">
+  </div>
+  <select class="filter-select" id="fMod" onchange="render()"><option value="">Todos los módulos</option></select>
+  <select class="filter-select" id="fPri" onchange="render()">
+    <option value="">Todas las prioridades</option>
+    <option>Alta</option><option>Media</option><option>Baja</option>
+  </select>
+  <select class="filter-select" id="fTip" onchange="render()">
+    <option value="">Todos los tipos</option>
+    <option>Funcionalidad</option><option>UX / Visualización</option>
+    <option>Datos / Contenido</option><option>UX / Comunicación</option><option>Técnico</option>
+  </select>
+  <div class="toolbar-right">
+    <button class="btn btn-outline" onclick="exportCSV()">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Exportar CSV
+    </button>
+    <div class="tab-group">
+      <button class="tab-btn active" id="tabKanban" onclick="switchTab('kanban')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="18"/><rect x="14" y="3" width="7" height="10"/></svg>Kanban
+      </button>
+      <button class="tab-btn" id="tabTabla" onclick="switchTab('tabla')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Tabla
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- SETUP BANNER -->
+  <div class="setup-banner" id="setupBanner">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+    <div>
+      <h3>Conectar con Google Sheets para colaboración en tiempo real</h3>
+      <p>
+        1. Hacé una copia de la
+        <a onclick="openSheetTemplate()">planilla de Portada Salud</a>
+        en tu Google Drive.<br>
+        2. En Google Sheets → Extensiones → Apps Script → pegá el script de sincronización.<br>
+        3. Publicá como Web App (Ejecutar como: Yo · Quién tiene acceso: Cualquiera) → copiá la URL.<br>
+        4. Pegá la URL acá:
+      </p>
+      <div class="config-panel" style="margin-top:10px;padding:0.9rem 1.1rem">
+        <div class="config-row">
+          <input class="config-input" id="sheetUrl" placeholder="https://script.google.com/macros/s/TU_ID/exec" style="font-family:monospace;font-size:11px">
+          <button class="btn btn-primary" onclick="saveSheetUrl()" style="flex-shrink:0">Conectar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KANBAN -->
+  <div class="kanban-wrap" id="vKanban"></div>
+
+  <!-- TABLE -->
+  <div class="table-wrap hidden" id="vTabla"></div>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="mTitle">Nueva mejora</h2>
+      <button class="btn btn-outline" style="padding:5px 8px" onclick="closeModal()">
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="eId">
+      <div class="field-row">
+        <div class="field">
+          <label>Módulo principal</label>
+          <select id="eMod">
+            <option>Dashboard</option><option>Requerimientos</option>
+            <option>Pedidos de Cotización</option><option>Cotizaciones</option>
+            <option>Órdenes de Compra</option><option>Adjudicaciones</option>
+            <option>Compras Directas</option><option>Recepción</option>
+            <option>Productos</option><option>Proveedores</option>
+            <option>Comodatos</option><option>Empresa</option><option>Informes</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Submenú / Pantalla</label>
+          <input id="eSub" placeholder="Ej: Compras · Dashboard">
+        </div>
+      </div>
+      <div class="field">
+        <label>Título de la mejora</label>
+        <input id="eTit" placeholder="Descripción corta del problema u oportunidad">
+      </div>
+      <div class="field-row-3">
+        <div class="field">
+          <label>Tipo</label>
+          <select id="eTip">
+            <option>Funcionalidad</option><option>UX / Visualización</option>
+            <option>Datos / Contenido</option><option>UX / Comunicación</option><option>Técnico</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Prioridad</label>
+          <select id="ePri"><option>Alta</option><option>Media</option><option>Baja</option></select>
+        </div>
+        <div class="field">
+          <label>Dificultad técnica</label>
+          <select id="eDif"><option>Baja</option><option>Media</option><option>Alta</option></select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Estado</label>
+        <select id="eEst"><option>Pendiente</option><option>En progreso</option><option>Resuelto</option></select>
+      </div>
+      <div class="field">
+        <label>Descripción del problema</label>
+        <textarea id="eDesc" placeholder="¿Qué pasa exactamente? Describí el problema con detalle."></textarea>
+      </div>
+      <div class="field">
+        <label>Propuesta de solución</label>
+        <textarea id="eSol" placeholder="¿Cómo se podría resolver? Incluí referencias si las tenés."></textarea>
+      </div>
+      <div class="field">
+        <label>Fecha estimada</label>
+        <input type="date" id="eFecha">
+      </div>
+      <div class="field">
+        <label>Adjuntos (capturas, documentos, imágenes)</label>
+        <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Arrastrá archivos o hacé clic para adjuntar<br>
+          <span style="font-size:10px;margin-top:3px;display:block">Imágenes, PDF, Word, Excel · Máx. 5MB por archivo</span>
+        </div>
+        <input type="file" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt" style="display:none">
+        <div class="attach-list" id="attachList"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" id="btnDelete" onclick="deleteItem()" style="display:none">
+        <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        Eliminar
+      </button>
+      <div style="display:flex;gap:8px;margin-left:auto">
+        <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveItem()">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'portada_salud_items_v2';
+const SHEET_URL_KEY = 'portada_salud_sheet_url';
+
+let items = [];
+let nextId = 1;
+let editId = null;
+let pendingFiles = [];
+let currentTab = 'kanban';
+
+const DEFAULT_ITEMS = [
+  {id:1,mod:"Dashboard",sub:"Compras",tit:"Selector de período predeterminado",tip:"Funcionalidad",est:"Pendiente",pri:"Alta",dif:"Media",fecha:"",desc:"Al consultar, trae por defecto enero a junio sin opción visible de modificarlo",sol:"Agregar selector de período flexible (fecha desde/hasta) o dropdown con opciones predefinidas",files:[]},
+  {id:2,mod:"Dashboard",sub:"Compras",tit:"Decimales en montos dificultan lectura",tip:"UX / Visualización",est:"Pendiente",pri:"Alta",dif:"Baja",fecha:"",desc:"Los números muestran decimales que dificultan la lectura rápida de montos",sol:"Eliminar decimales en montos totales y aplicar separador de miles",files:[]},
+  {id:3,mod:"Dashboard",sub:"Compras",tit:"Separador de miles ausente",tip:"UX / Visualización",est:"Pendiente",pri:"Alta",dif:"Baja",fecha:"",desc:"Los números no tienen separador de miles, difícil leer cifras grandes",sol:"Aplicar formato con separador de miles en todos los importes",files:[]},
+  {id:4,mod:"Dashboard",sub:"Compras por Vendedor",tit:"Nombres de proveedor ausentes",tip:"Datos / Contenido",est:"Pendiente",pri:"Alta",dif:"Media",fecha:"",desc:"El listado no muestra el nombre del proveedor, solo datos parciales",sol:"Mostrar nombre completo del proveedor en cada fila",files:[]},
+  {id:5,mod:"Dashboard",sub:"Compras por Vendedor",tit:"Gráfico sin porcentaje del total",tip:"UX / Visualización",est:"Pendiente",pri:"Alta",dif:"Baja",fecha:"",desc:"El gráfico no muestra el % que representa cada proveedor sobre el total",sol:"Agregar etiqueta con % en el gráfico de torta o barras",files:[]},
+  {id:6,mod:"Dashboard",sub:"Compras por Vendedor",tit:"Separador de miles en módulo vendedor",tip:"UX / Visualización",est:"Pendiente",pri:"Alta",dif:"Baja",fecha:"",desc:"Los montos en este módulo tampoco tienen separador de miles",sol:"Unificar formato numérico en todo el dashboard",files:[]},
+  {id:7,mod:"Dashboard",sub:"Toda la plataforma",tit:"Terminología mixta: proveedor vs vendedor",tip:"UX / Comunicación",est:"Pendiente",pri:"Media",dif:"Baja",fecha:"",desc:"Se usan indistintamente 'proveedor' y 'vendedor' generando confusión",sol:"Definir un único término y aplicarlo consistentemente en toda la plataforma",files:[]},
+  {id:8,mod:"Dashboard",sub:"Ranking de Proveedores",tit:"Módulo de ranking faltante — Monto Total",tip:"Funcionalidad",est:"Pendiente",pri:"Alta",dif:"Media",fecha:"",desc:"No existe ranking de proveedores por monto total de operaciones",sol:"Crear tabla ranking: Proveedor | Monto Total | % del total",files:[]},
+  {id:9,mod:"Dashboard",sub:"Ranking de Proveedores",tit:"Ranking por Cantidad de Operaciones",tip:"Funcionalidad",est:"Pendiente",pri:"Alta",dif:"Media",fecha:"",desc:"No hay métrica de cantidad de operaciones por proveedor",sol:"Agregar columna Cantidad de Operaciones al ranking",files:[]},
+  {id:10,mod:"Dashboard",sub:"Ranking de Proveedores",tit:"Ranking por Compra Promedio",tip:"Funcionalidad",est:"Pendiente",pri:"Media",dif:"Baja",fecha:"",desc:"No se muestra el ticket promedio por proveedor",sol:"Agregar columna Compra Promedio = Monto / Operaciones",files:[]},
+  {id:11,mod:"Dashboard",sub:"Compras Trimestrales",tit:"Separador de miles en cifras trimestrales",tip:"UX / Visualización",est:"Pendiente",pri:"Alta",dif:"Baja",fecha:"",desc:"Los montos trimestrales no tienen separador de miles",sol:"Aplicar formato numérico unificado en toda la plataforma",files:[]}
+];
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      items = parsed.items || DEFAULT_ITEMS;
+      nextId = parsed.nextId || (Math.max(...items.map(x=>x.id))+1);
+    } else {
+      items = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+      nextId = 12;
+      saveData();
+    }
+  } catch(e) { items = JSON.parse(JSON.stringify(DEFAULT_ITEMS)); nextId = 12; }
+  const url = localStorage.getItem(SHEET_URL_KEY);
+  if (url) {
+    document.getElementById('sheetUrl').value = url;
+    document.getElementById('setupBanner').style.display = 'none';
+  }
+}
+
+function saveData() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({items, nextId, updated: new Date().toISOString()})); } catch(e){}
+}
+
+function filtered() {
+  const q = document.getElementById('srch').value.toLowerCase();
+  const m = document.getElementById('fMod').value;
+  const p = document.getElementById('fPri').value;
+  const t = document.getElementById('fTip').value;
+  return items.filter(d =>
+    (!q || (d.tit+d.mod+d.sub+d.desc+d.sol).toLowerCase().includes(q)) &&
+    (!m || d.mod === m) && (!p || d.pri === p) && (!t || d.tip === t)
+  );
+}
+
+function bPri(p) { const m={Alta:'b-alta',Media:'b-media',Baja:'b-baja'}; return `<span class="badge ${m[p]||'b-baja'}">${p}</span>`; }
+function bTip(t) { const m={'Funcionalidad':'b-func','UX / Visualización':'b-ux','Datos / Contenido':'b-datos','UX / Comunicación':'b-com','Técnico':'b-tec'}; return `<span class="badge ${m[t]||'b-tec'}">${t}</span>`; }
+function bDif(d) { const m={Baja:'b-baja',Media:'b-media',Alta:'b-alta'}; return `<span class="badge ${m[d]||'b-baja'}">Dif. ${d}</span>`; }
+function bEst(e) {
+  if(e==='Resuelto') return '<span style="color:#059669;font-size:11px;font-weight:500">● Resuelto</span>';
+  if(e==='En progreso') return '<span style="color:#2563eb;font-size:11px;font-weight:500">● En progreso</span>';
+  return '<span style="color:#d97706;font-size:11px;font-weight:500">● Pendiente</span>';
+}
+
+function renderKPIs() {
+  const tot=items.length, pend=items.filter(x=>x.est==='Pendiente').length,
+        prog=items.filter(x=>x.est==='En progreso').length, done=items.filter(x=>x.est==='Resuelto').length,
+        alta=items.filter(x=>x.pri==='Alta').length, pct=tot?Math.round(done/tot*100):0;
+  document.getElementById('kTotal').textContent=tot;
+  document.getElementById('kPend').textContent=pend;
+  document.getElementById('kProg').textContent=prog;
+  document.getElementById('kDone').textContent=done;
+  document.getElementById('kAlta').textContent=alta;
+  document.getElementById('kPct').textContent=pct+'%';
+  document.getElementById('kBar').style.width=pct+'%';
+}
+
+function updateModFilter() {
+  const mods=[...new Set(items.map(x=>x.mod))].sort();
+  const sel=document.getElementById('fMod'), cur=sel.value;
+  sel.innerHTML='<option value="">Todos los módulos</option>'+mods.map(m=>`<option${m===cur?' selected':''}>${m}</option>`).join('');
+}
+
+function renderKanban(list) {
+  const cols={Pendiente:[],['En progreso']:[],Resuelto:[]};
+  list.forEach(d => { (cols[d.est]||cols['Pendiente']).push(d); });
+  const colDefs = [
+    {key:'Pendiente', cls:'col-pend', label:'Pendiente'},
+    {key:'En progreso', cls:'col-prog', label:'En progreso'},
+    {key:'Resuelto', cls:'col-done', label:'Resuelto'}
+  ];
+  document.getElementById('vKanban').innerHTML = colDefs.map(c => {
+    const cc = cols[c.key];
+    return `<div>
+      <div class="col-header ${c.cls}">${c.label}<span class="col-count">${cc.length}</span></div>
+      ${cc.length === 0 ? '<div class="empty-col">Sin ítems en esta columna</div>' :
+        cc.map(d => `
+        <div class="card" onclick="openEdit(${d.id})">
+          <div class="card-meta">
+            <span class="card-id">#${d.id} · ${d.mod}</span>
+            ${d.files&&d.files.length ? `<span class="card-attach"><svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>${d.files.length}</span>` : ''}
+          </div>
+          <div class="card-title">${d.tit}</div>
+          <div class="card-module">${d.sub ? '→ '+d.sub : ''}</div>
+          ${d.desc ? `<div class="card-desc">${d.desc.length>120?d.desc.substring(0,120)+'…':d.desc}</div>` : ''}
+          <div class="card-footer">
+            ${bPri(d.pri)}${bTip(d.tip)}${bDif(d.dif)}
+            ${d.fecha ? `<span class="badge b-tec">${d.fecha}</span>` : ''}
+          </div>
+        </div>`).join('')}
+    </div>`;
+  }).join('');
+}
+
+function renderTabla(list) {
+  if (!list.length) { document.getElementById('vTabla').innerHTML='<div style="padding:3rem;text-align:center;color:#6b7370;font-size:12px">Sin resultados para los filtros aplicados</div>'; return; }
+  document.getElementById('vTabla').innerHTML = `
+    <table>
+      <colgroup><col style="width:4%"><col style="width:14%"><col style="width:20%"><col style="width:12%"><col style="width:10%"><col style="width:10%"><col style="width:12%"><col style="width:9%"><col style="width:9%"></colgroup>
+      <thead><tr><th>#</th><th>Módulo</th><th>Mejora</th><th>Tipo</th><th>Prioridad</th><th>Dificultad</th><th>Estado</th><th>Fecha</th><th>Adj.</th></tr></thead>
+      <tbody>${list.map(d=>`
+        <tr onclick="openEdit(${d.id})">
+          <td style="color:#8f9896;font-size:11px">${d.id}</td>
+          <td><strong style="font-size:12px">${d.mod}</strong>${d.sub?`<br><span style="font-size:10px;color:#8f9896">${d.sub}</span>`:''}</td>
+          <td style="font-weight:500;font-size:12px">${d.tit}</td>
+          <td>${bTip(d.tip)}</td>
+          <td>${bPri(d.pri)}</td>
+          <td>${bDif(d.dif)}</td>
+          <td>${bEst(d.est)}</td>
+          <td style="font-size:11px;color:#8f9896">${d.fecha||'—'}</td>
+          <td style="font-size:11px;color:#8f9896">${d.files&&d.files.length?d.files.length+' archivo'+(d.files.length>1?'s':''):'—'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function render() {
+  const list = filtered();
+  renderKPIs();
+  updateModFilter();
+  renderKanban(list);
+  renderTabla(list);
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('vKanban').classList.toggle('hidden', tab !== 'kanban');
+  document.getElementById('vTabla').classList.toggle('hidden', tab !== 'tabla');
+  document.getElementById('tabKanban').classList.toggle('active', tab === 'kanban');
+  document.getElementById('tabTabla').classList.toggle('active', tab === 'tabla');
+}
+
+function openNew() {
+  editId = null; pendingFiles = [];
+  document.getElementById('mTitle').textContent = 'Nueva mejora';
+  document.getElementById('btnDelete').style.display = 'none';
+  ['eTit','eDesc','eSol','eSub','eFecha'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('eMod').value='Dashboard';
+  document.getElementById('eTip').value='Funcionalidad';
+  document.getElementById('eEst').value='Pendiente';
+  document.getElementById('ePri').value='Alta';
+  document.getElementById('eDif').value='Baja';
+  renderAttachList([]);
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function openEdit(id) {
+  const d = items.find(x=>x.id===id); if(!d) return;
+  editId = id; pendingFiles = [...(d.files||[])];
+  document.getElementById('mTitle').textContent = 'Mejora #'+id+' — '+d.mod;
+  document.getElementById('btnDelete').style.display = '';
+  document.getElementById('eTit').value = d.tit;
+  document.getElementById('eMod').value = d.mod;
+  document.getElementById('eSub').value = d.sub||'';
+  document.getElementById('eTip').value = d.tip;
+  document.getElementById('eEst').value = d.est;
+  document.getElementById('ePri').value = d.pri;
+  document.getElementById('eDif').value = d.dif;
+  document.getElementById('eFecha').value = d.fecha||'';
+  document.getElementById('eDesc').value = d.desc||'';
+  document.getElementById('eSol').value = d.sol||'';
+  renderAttachList(pendingFiles);
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); pendingFiles=[]; }
+
+function saveItem() {
+  const tit = document.getElementById('eTit').value.trim();
+  if (!tit) { toast('El título es obligatorio'); return; }
+  const obj = {
+    mod:document.getElementById('eMod').value, sub:document.getElementById('eSub').value.trim(),
+    tit, tip:document.getElementById('eTip').value, est:document.getElementById('eEst').value,
+    pri:document.getElementById('ePri').value, dif:document.getElementById('eDif').value,
+    fecha:document.getElementById('eFecha').value,
+    desc:document.getElementById('eDesc').value.trim(), sol:document.getElementById('eSol').value.trim(),
+    files:pendingFiles
+  };
+  if (editId) { const idx=items.findIndex(x=>x.id===editId); items[idx]={...items[idx],...obj}; }
+  else { items.push({id:nextId++,...obj}); }
+  saveData(); closeModal(); render();
+  toast(editId ? 'Mejora actualizada' : 'Mejora agregada');
+  pushToSheet(obj);
+}
+
+function deleteItem() {
+  if (!editId) return;
+  if (!confirm('¿Eliminar esta mejora? Esta acción no se puede deshacer.')) return;
+  items = items.filter(x=>x.id!==editId);
+  saveData(); closeModal(); render(); toast('Mejora eliminada');
+}
+
+function renderAttachList(files) {
+  document.getElementById('attachList').innerHTML = files.map((f,i)=>`
+    <div class="attach-item">
+      <div class="attach-item-name">
+        ${f.url&&f.url.startsWith('data:image')
+          ? `<img src="${f.url}" class="attach-preview" alt="">`
+          : `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`}
+        <span>${f.name}</span>
+      </div>
+      <div class="attach-item-actions">
+        ${f.url?`<a href="${f.url}" download="${f.name}" title="Descargar"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>`:''}
+        <button onclick="removeFile(${i});event.stopPropagation()" title="Quitar"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+    </div>`).join('');
+}
+
+function removeFile(idx) { pendingFiles.splice(idx,1); renderAttachList(pendingFiles); }
+
+document.getElementById('fileInput').addEventListener('change', function() {
+  Array.from(this.files).forEach(f => {
+    if(f.size > 5*1024*1024) { toast('Archivo demasiado grande (máx. 5MB)'); return; }
+    const reader = new FileReader();
+    reader.onload = e => { pendingFiles.push({name:f.name, url:e.target.result, size:f.size}); renderAttachList(pendingFiles); };
+    reader.readAsDataURL(f);
+  });
+  this.value='';
+});
+
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('drag-over');
+  Array.from(e.dataTransfer.files).forEach(f => {
+    const reader = new FileReader();
+    reader.onload = ev => { pendingFiles.push({name:f.name, url:ev.target.result}); renderAttachList(pendingFiles); };
+    reader.readAsDataURL(f);
+  });
+});
+
+document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target===document.getElementById('modalOverlay')) closeModal(); });
+
+function exportCSV() {
+  const h = ['ID','Módulo','Submenú','Título','Tipo','Prioridad','Dificultad','Estado','Fecha','Descripción','Solución','Adjuntos'];
+  const rows = items.map(d => [d.id,d.mod,d.sub||'',d.tit,d.tip,d.pri,d.dif,d.est,d.fecha||'',d.desc||'',d.sol||'',(d.files||[]).map(f=>f.name).join('; ')]
+    .map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  const csv = [h.join(','),...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download = 'PortadaSalud_Mejoras_'+new Date().toISOString().substring(0,10)+'.csv';
+  a.click();
+  toast('CSV exportado');
+}
+
+function saveSheetUrl() {
+  const url = document.getElementById('sheetUrl').value.trim();
+  if (!url) { toast('Pegá la URL del Apps Script'); return; }
+  localStorage.setItem(SHEET_URL_KEY, url);
+  document.getElementById('setupBanner').style.display = 'none';
+  toast('Google Sheets conectado'); syncFromSheet();
+}
+
+async function syncFromSheet() {
+  const url = localStorage.getItem(SHEET_URL_KEY);
+  if (!url) { document.getElementById('setupBanner').style.display = ''; return; }
+  document.getElementById('syncLabel').textContent = 'Sincronizando…';
+  try {
+    const res = await fetch(url+'?action=get');
+    const data = await res.json();
+    if (data.items && data.items.length) {
+      data.items.forEach(remote => {
+        const local = items.find(x=>x.id===remote.id);
+        if (!local) items.push({...remote, files:[]});
+        else if (remote.updated > (local.updated||'')) items[items.indexOf(local)] = {...local,...remote};
+      });
+      nextId = Math.max(...items.map(x=>x.id))+1;
+      saveData(); render();
+      document.getElementById('syncLabel').textContent = 'Sincronizado · '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    }
+  } catch(e) {
+    document.getElementById('syncLabel').textContent = 'Error de conexión';
+    toast('No se pudo sincronizar con el Sheet');
+  }
+}
+
+async function pushToSheet(obj) {
+  const url = localStorage.getItem(SHEET_URL_KEY);
+  if (!url) return;
+  try {
+    await fetch(url+'?action=push', {method:'POST', body:JSON.stringify(obj), headers:{'Content-Type':'application/json'}});
+  } catch(e) {}
+}
+
+function openSheetTemplate() {
+  window.open('https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms/copy','_blank');
+  toast('Se abrió Google Sheets en nueva pestaña');
+}
+
+function toast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast'; el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 3000);
+}
+
+const CORRECT_PWD = 'portada2025';
+const SESSION_KEY = 'portada_salud_auth';
+
+function checkPwd() {
+  const val = document.getElementById('pwdInput').value;
+  if (val === CORRECT_PWD) {
+    sessionStorage.setItem(SESSION_KEY, '1');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appContent').style.display = 'block';
+    loadData(); render();
+  } else {
+    document.getElementById('pwdError').style.display = 'block';
+    document.getElementById('pwdInput').value = '';
+    document.getElementById('pwdInput').focus();
+  }
+}
+
+if (sessionStorage.getItem(SESSION_KEY) === '1') {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appContent').style.display = 'block';
+  loadData(); render();
+}
+
+setInterval(() => {
+  const url = localStorage.getItem(SHEET_URL_KEY);
+  if (url) syncFromSheet();
+}, 60000);
+</script>
+
+</div><!-- /appContent -->
+
+<!--
+═══════════════════════════════════════════════════════
+ GOOGLE APPS SCRIPT — Pegá esto en Apps Script
+ (Extensions → Apps Script en tu Google Sheet)
+═══════════════════════════════════════════════════════
+
+const SHEET_NAME = 'Mejoras';
+
+function doGet(e) {
+  const action = e.parameter.action || 'get';
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) sheet = crearHoja(ss);
+
+  if (action === 'get') {
+    const rows = sheet.getDataRange().getValues();
+    const headers = rows[0];
+    const items = rows.slice(1).map(row => {
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = row[i]);
+      return obj;
+    });
+    return ContentService.createTextOutput(JSON.stringify({items}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doPost(e) {
+  const action = e.parameter.action || 'push';
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(SHEET_NAME) || crearHoja(ss);
+  const data = JSON.parse(e.postData.contents);
+  const headers = sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0];
+
+  const existing = sheet.getDataRange().getValues();
+  let found = false;
+  for (let i = 1; i < existing.length; i++) {
+    if (existing[i][0] == data.id) {
+      sheet.getRange(i+1, 1, 1, headers.length).setValues([headers.map(h=>data[h]||'')]);
+      found = true; break;
+    }
+  }
+  if (!found) sheet.appendRow(headers.map(h => data[h]||''));
+  return ContentService.createTextOutput(JSON.stringify({ok:true}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function crearHoja(ss) {
+  const sheet = ss.insertSheet(SHEET_NAME);
+  const headers = ['id','mod','sub','tit','tip','pri','dif','est','fecha','desc','sol','updated'];
+  sheet.getRange(1,1,1,headers.length).setValues([headers])
+    .setBackground('#24695C').setFontColor('#ffffff').setFontWeight('bold');
+  sheet.setFrozenRows(1);
+  return sheet;
+}
+
+═══════════════════════════════════════════════════════
+ INSTRUCCIONES PARA GITHUB PAGES
+═══════════════════════════════════════════════════════
+ 1. Creá un repo en GitHub (ej: portada-salud-kanban)
+ 2. Subí este archivo como index.html
+ 3. Settings → Pages → Branch: main → Save
+ 4. Tu URL será: https://TU-USUARIO.github.io/portada-salud-kanban
+ 5. Compartí esa URL con tu equipo
+═══════════════════════════════════════════════════════
+-->
+</body>
+</html>

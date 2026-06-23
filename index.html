@@ -372,8 +372,7 @@ tbody tr:hover td { background: var(--green-50); }
 <!-- MAIN -->
 <main class="main">
 
-  <!-- SETUP BANNER -->
-  <div class="setup-banner" id="setupBanner">
+  <div class="setup-banner" id="setupBanner" style="display:none">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
     <div>
       <h3>Conectar con Google Sheets para colaboración en tiempo real</h3>
@@ -496,7 +495,7 @@ tbody tr:hover td { background: var(--green-50); }
 
 <script>
 const STORAGE_KEY = 'portada_salud_items_v2';
-const SHEET_URL_KEY = 'portada_salud_sheet_url';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwPDcDZgmqGrmtwHHdjeAtDOKn9wlKfxYWmJDOCpsCZQx-hDmxyOyDicKPFGGBeQoO0/exec';
 
 let items = [];
 let nextId = 1;
@@ -531,11 +530,7 @@ function loadData() {
       saveData();
     }
   } catch(e) { items = JSON.parse(JSON.stringify(DEFAULT_ITEMS)); nextId = 12; }
-  const url = localStorage.getItem(SHEET_URL_KEY);
-  if (url) {
-    document.getElementById('sheetUrl').value = url;
-    document.getElementById('setupBanner').style.display = 'none';
-  }
+  document.getElementById('setupBanner').style.display = 'none';
 }
 
 function saveData() {
@@ -764,17 +759,10 @@ function exportCSV() {
   toast('CSV exportado');
 }
 
-function saveSheetUrl() {
-  const url = document.getElementById('sheetUrl').value.trim();
-  if (!url) { toast('Pegá la URL del Apps Script'); return; }
-  localStorage.setItem(SHEET_URL_KEY, url);
-  document.getElementById('setupBanner').style.display = 'none';
-  toast('Google Sheets conectado'); syncFromSheet();
-}
+function saveSheetUrl() { syncFromSheet(); }
 
 async function syncFromSheet() {
-  const url = localStorage.getItem(SHEET_URL_KEY);
-  if (!url) { document.getElementById('setupBanner').style.display = ''; return; }
+  const url = SHEET_URL;
   document.getElementById('syncLabel').textContent = 'Sincronizando…';
   try {
     const res = await fetch(url+'?action=get');
@@ -796,8 +784,7 @@ async function syncFromSheet() {
 }
 
 async function pushToSheet(obj) {
-  const url = localStorage.getItem(SHEET_URL_KEY);
-  if (!url) return;
+  const url = SHEET_URL;
   try {
     await fetch(url+'?action=push', {method:'POST', body:JSON.stringify(obj), headers:{'Content-Type':'application/json'}});
   } catch(e) {}
@@ -824,7 +811,7 @@ function checkPwd() {
     sessionStorage.setItem(SESSION_KEY, '1');
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appContent').style.display = 'block';
-    loadData(); render();
+    loadData(); render(); syncFromSheet();
   } else {
     document.getElementById('pwdError').style.display = 'block';
     document.getElementById('pwdInput').value = '';
@@ -835,13 +822,10 @@ function checkPwd() {
 if (sessionStorage.getItem(SESSION_KEY) === '1') {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('appContent').style.display = 'block';
-  loadData(); render();
+  loadData(); render(); syncFromSheet();
 }
 
-setInterval(() => {
-  const url = localStorage.getItem(SHEET_URL_KEY);
-  if (url) syncFromSheet();
-}, 60000);
+setInterval(() => { syncFromSheet(); }, 60000);
 </script>
 
 </div><!-- /appContent -->

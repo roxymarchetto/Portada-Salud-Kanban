@@ -821,53 +821,92 @@ function saveSheetUrl() { syncFromSheet(); }
 
 function syncFromSheet() {
   document.getElementById('syncLabel').textContent = 'Sincronizando…';
+  
+  // Usamos fetch con modo cors y fallback a JSONP
   const callbackName = 'gsCallback_' + Date.now();
   const script = document.createElement('script');
-  script.src = SHEET_URL + '?action=get&callback=' + callbackName;
+  script.src = SHEET_URL + '?action=get&callback=' + callbackName + '&t=' + Date.now();
+  
+  const timer = setTimeout(() => {
+    try { document.body.removeChild(script); } catch(e) {}
+    delete window[callbackName];
+    document.getElementById('syncLabel').textContent = 'Error de conexión';
+    toast('No se pudo sincronizar con el Sheet');
+  }, 15000);
+
   window[callbackName] = function(data) {
-    document.body.removeChild(script);
+    clearTimeout(timer);
+    try { document.body.removeChild(script); } catch(e) {}
     delete window[callbackName];
     try {
-      if (data.items && data.items.length) {
-        data.items.forEach(remote => {
-          const local = items.find(x=>x.id==remote.id);
-          if (!local) items.push({...remote, files:[]});
-          else if ((remote.updated||'') > (local.updated||'')) {
-            items[items.indexOf(local)] = {...local,...remote};
+      if (data && data.items) {
+        if (data.items.length > 0) {
+          // Merge remoto con local — remoto tiene prioridad
+          data.items.forEach(remote => {
+            if (!remote.id) return;
+            const localIdx = items.findIndex(x => String(x.id) === String(remote.id));
+            const remoteObj = {...remote, files: remote.files || []};
+            if (localIdx === -1) {
+              items.push(remoteObj);
+            } else {
+              const localUpdated = items[localIdx].updated || '';
+              const remoteUpdated = remote.updated || '';
+              if (remoteUpdated >= localUpdated) {
+                items[localIdx] = {...items[localIdx], ...remoteObj};
+              }
+            }
+          });
+          if (items.length > 0) {
+            nextId = Math.max(...items.map(x => parseInt(x.id)||0)) + 1;
           }
-        });
-        if (items.length > 0) nextId = Math.max(...items.map(x=>x.id))+1;
-        saveData(); render();
-        document.getElementById('syncLabel').textContent = 'Sincronizado · '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+          saveData(); render();
+        }
+        document.getElementById('syncLabel').textContent = 'Sincronizado · ' + new Date().toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'});
+        toast('✓ Sincronizado con Google Sheets');
       }
-    } catch(e) {
+    } catch(err) {
       document.getElementById('syncLabel').textContent = 'Error de conexión';
-      toast('No se pudo sincronizar con el Sheet');
+      toast('Error al procesar datos del Sheet');
     }
   };
+  
   script.onerror = function() {
-    document.body.removeChild(script);
+    clearTimeout(timer);
+    try { document.body.removeChild(script); } catch(e) {}
     delete window[callbackName];
     document.getElementById('syncLabel').textContent = 'Error de conexión';
     toast('No se pudo sincronizar con el Sheet');
   };
+  
   document.body.appendChild(script);
 }
 
 function pushToSheet(obj) {
-  const callbackName = 'gsPush_' + Date.now();
-  const script = document.createElement('script');
-  const encoded = encodeURIComponent(JSON.stringify(obj));
-  script.src = SHEET_URL + '?action=push&callback=' + callbackName + '&data=' + encoded;
-  window[callbackName] = function() {
-    try { document.body.removeChild(script); } catch(e) {}
-    delete window[callbackName];
-  };
-  script.onerror = function() {
-    try { document.body.removeChild(script); } catch(e) {}
-    delete window[callbackName];
-  };
-  document.body.appendChild(script);
+  // Intentar POST primero, fallback a JSONP GET
+  const payload = {...obj};
+  delete payload.files; // No mandamos archivos base64 al sheet
+  payload.updated = new Date().toISOString();
+  
+  fetch(SHEET_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  }).catch(() => {
+    // Fallback JSONP para escritura
+    const callbackName = 'gsPush_' + Date.now();
+    const script = document.createElement('script');
+    script.src = SHEET_URL + '?action=push&callback=' + callbackName + '&data=' + encodeURIComponent(JSON.stringify(payload));
+    window[callbackName] = function() {
+      try { document.body.removeChild(script); } catch(e) {}
+      delete window[callbackName];
+    };
+    script.onerror = function() {
+      try { document.body.removeChild(script); } catch(e) {}
+      delete window[callbackName];
+    };
+    document.body.appendChild(script);
+  });
 }
 
 function openSheetTemplate() {

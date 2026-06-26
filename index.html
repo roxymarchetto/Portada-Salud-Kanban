@@ -386,7 +386,7 @@ tbody tr:hover td { background: var(--green-50); }
       </p>
       <div class="config-panel" style="margin-top:10px;padding:0.9rem 1.1rem">
         <div class="config-row">
-          <input class="config-input" id="sheetUrl" placeholder="https://script.google.com/macros/s/AKfycbwuYqy8Ei0tE9-_CPl9LfuYVLBCc7w_OE2Bm4h9j39Htrn3noP68lIKQALUnd_OU7f22A/exec" style="font-family:monospace;font-size:11px">
+          <input class="config-input" id="sheetUrl" placeholder="https://script.google.com/macros/s/AKfycbzvgNZCl-jfUA6D5KvDSHqbwiEEKGX_dtlDM-_zTAAIYtwoN1iHPStpQ39ZALMDy5S1JQ/exec" style="font-family:monospace;font-size:11px">
           <button class="btn btn-primary" onclick="saveSheetUrl()" style="flex-shrink:0">Conectar</button>
         </div>
       </div>
@@ -495,7 +495,7 @@ tbody tr:hover td { background: var(--green-50); }
 
 <script>
 const STORAGE_KEY = 'portada_salud_items_v2';
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwuYqy8Ei0tE9-_CPl9LfuYVLBCc7w_OE2Bm4h9j39Htrn3noP68lIKQALUnd_OU7f22A/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzvgNZCl-jfUA6D5KvDSHqbwiEEKGX_dtlDM-_zTAAIYtwoN1iHPStpQ39ZALMDy5S1JQ/exec';
 
 let items = [];
 let nextId = 1;
@@ -689,7 +689,8 @@ function saveItem() {
     pri:document.getElementById('ePri').value, dif:document.getElementById('eDif').value,
     fecha:document.getElementById('eFecha').value,
     desc:document.getElementById('eDesc').value.trim(), sol:document.getElementById('eSol').value.trim(),
-    files:pendingFiles
+    files:pendingFiles,
+    adjuntos:pendingFiles.map(f=>f.viewUrl||'').filter(Boolean).join(', ')
   };
   if (editId) { const idx=items.findIndex(x=>x.id===editId); items[idx]={...items[idx],...obj}; }
   else { items.push({id:nextId++,...obj}); }
@@ -709,28 +710,80 @@ function renderAttachList(files) {
   document.getElementById('attachList').innerHTML = files.map((f,i)=>`
     <div class="attach-item">
       <div class="attach-item-name">
-        ${f.url&&f.url.startsWith('data:image')
-          ? `<img src="${f.url}" class="attach-preview" alt="">`
-          : `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`}
-        <span>${f.name}</span>
+        ${f.viewUrl
+          ? `<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#24695C;fill:none;stroke-width:2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`
+          : f.uploading
+          ? `<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#d97706;fill:none;stroke-width:2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>`
+          : `<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#6b7370;fill:none;stroke-width:2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`}
+        <span style="color:${f.uploading?'#d97706':f.viewUrl?'#24695C':'inherit'}">${f.uploading?'Subiendo... '+f.name:f.name}</span>
       </div>
       <div class="attach-item-actions">
-        ${f.url?`<a href="${f.url}" download="${f.name}" title="Descargar"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>`:''}
-        <button onclick="removeFile(${i});event.stopPropagation()" title="Quitar"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        ${f.viewUrl?`<a href="${f.viewUrl}" target="_blank" title="Ver en Drive" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`:''}
+        ${!f.uploading?`<button onclick="removeFile(${i});event.stopPropagation()" title="Quitar"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`:''}
       </div>
     </div>`).join('');
 }
 
 function removeFile(idx) { pendingFiles.splice(idx,1); renderAttachList(pendingFiles); }
 
-document.getElementById('fileInput').addEventListener('change', function() {
-  Array.from(this.files).forEach(f => {
-    if(f.size > 5*1024*1024) { toast('Archivo demasiado grande (máx. 5MB)'); return; }
+function uploadFileToDrive(file, cardId) {
+  return new Promise((resolve, reject) => {
+    if(file.size > 10*1024*1024) { toast('Archivo demasiado grande (máx. 10MB)'); reject(); return; }
     const reader = new FileReader();
-    reader.onload = e => { pendingFiles.push({name:f.name, url:e.target.result, size:f.size}); renderAttachList(pendingFiles); };
-    reader.readAsDataURL(f);
+    reader.onload = function(e) {
+      const b64 = e.target.result.split(',')[1];
+      const callbackName = 'driveUpload_' + Date.now();
+      const script = document.createElement('script');
+      const params = new URLSearchParams({
+        action: 'upload',
+        fileName: encodeURIComponent(file.name),
+        cardId: cardId || 'nuevo',
+        fileData: encodeURIComponent(b64),
+        mimeType: encodeURIComponent(file.type || 'application/octet-stream'),
+        callback: callbackName
+      });
+      script.src = SHEET_URL + '?' + params.toString();
+      window[callbackName] = function(data) {
+        try { document.body.removeChild(script); } catch(e) {}
+        delete window[callbackName];
+        if (data.ok) resolve(data);
+        else reject(data.error);
+      };
+      script.onerror = function() {
+        try { document.body.removeChild(script); } catch(e) {}
+        delete window[callbackName];
+        reject('Error de red');
+      };
+      document.body.appendChild(script);
+    };
+    reader.readAsDataURL(file);
   });
-  this.value='';
+}
+
+function handleFiles(fileList) {
+  const cardId = document.getElementById('eId').value || 'nuevo';
+  Array.from(fileList).forEach(f => {
+    const placeholder = { name: f.name, uploading: true };
+    pendingFiles.push(placeholder);
+    renderAttachList(pendingFiles);
+    uploadFileToDrive(f, cardId).then(data => {
+      const idx = pendingFiles.indexOf(placeholder);
+      if (idx > -1) {
+        pendingFiles[idx] = { name: data.fileName, viewUrl: data.viewUrl, fileId: data.fileId };
+        renderAttachList(pendingFiles);
+        toast('✓ ' + data.fileName + ' subido a Drive');
+      }
+    }).catch(err => {
+      const idx = pendingFiles.indexOf(placeholder);
+      if (idx > -1) pendingFiles.splice(idx, 1);
+      renderAttachList(pendingFiles);
+      toast('Error subiendo ' + f.name);
+    });
+  });
+}
+
+document.getElementById('fileInput').addEventListener('change', function() {
+  handleFiles(this.files); this.value='';
 });
 
 const dz = document.getElementById('dropZone');
@@ -738,11 +791,7 @@ dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dra
 dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
 dz.addEventListener('drop', e => {
   e.preventDefault(); dz.classList.remove('drag-over');
-  Array.from(e.dataTransfer.files).forEach(f => {
-    const reader = new FileReader();
-    reader.onload = ev => { pendingFiles.push({name:f.name, url:ev.target.result}); renderAttachList(pendingFiles); };
-    reader.readAsDataURL(f);
-  });
+  handleFiles(e.dataTransfer.files);
 });
 
 document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target===document.getElementById('modalOverlay')) closeModal(); });
